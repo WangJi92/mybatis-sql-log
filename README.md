@@ -11,6 +11,16 @@
 ## 1、使用
 [mybaits sql log Demo 工程](https://github.com/WangJi92/mybatis-log-demo/blob/master/README.md)
 
+插件可以在maven 仓库中搜索  mybatis-sql-log
+[阿里云搜索](https://maven.aliyun.com/mvn/search)
+```xml
+         <dependency>
+            <groupId>com.github.WangJi92</groupId>
+            <artifactId>mybatis-sql-log</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+```
+
 实现原理主要类：com.mybatis.spring.boot.autoconfigure.MybatisSqlCompletePrintInterceptor
 ```xml
         <dependency>
