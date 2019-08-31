@@ -9,7 +9,7 @@
 
 <a name="VIcSM"></a>
 ## 1、使用
-
+[mybaits sql log Demo 工程](https://github.com/WangJi92/mybatis-log-demo/blob/master/README.md)
 ```xml
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
@@ -19,7 +19,7 @@
          <dependency>
             <groupId>com.github.WangJi92</groupId>
             <artifactId>mybatis-sql-log</artifactId>
-            <version>版本</version>
+            <version>1.0.0</version>
         </dependency>
 ```
 mybats.print=true 使用spring boot 工程集成
