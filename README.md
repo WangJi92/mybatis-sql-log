@@ -1,8 +1,5 @@
 # mybatis-sql-log
 
-<a name="mybatis-sql-log"></a>
-# mybatis-sql-log
-
 > mybatis-sql-log 主要是为了打印mybatis 完整的sql语句，通过mybaits 提供的插件的方式进行拦截，
 > 获取内部执行的sql，并将完整的sql语句打印出来。
 
