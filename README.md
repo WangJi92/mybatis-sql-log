@@ -112,3 +112,8 @@ public void setParameters(PreparedStatement ps) {
 执行器Executor，执行器负责整个SQL执行过程的总体控制。<br />参数处理器ParameterHandler，参数处理器负责PreparedStatement入参的具体设置。<br />语句处理器StatementHandler，语句处理器负责和JDBC层具体交互，包括prepare语句，执行语句，以及调用ParameterHandler.parameterize()设置参数。<br />结果集处理器ResultSetHandler，结果处理器负责将JDBC查询结果映射到java对象。
 
 了解了这四大对象，其实我们的处理本次这个插件十分的重要，插件对象可以在Executor、或者StatementHandler两个上面处理。
+
+## plugins 实现了两种
+分别在两个分支中实现，可以根据自己的需求进行处理
+* [Executor plugins 方式拦截](https://github.com/WangJi92/mybatis-sql-log/tree/Executor)
+* [StatementHandler plugins 方式拦截](https://github.com/WangJi92/mybatis-sql-log/tree/StatementHandler)
