@@ -6,6 +6,8 @@
 > mybatis-sql-log 主要是为了打印mybatis 完整的sql语句，通过mybaits 提供的插件的方式进行拦截，
 > 获取内部执行的sql，并将完整的sql语句打印出来。
 
+spring boot 其实可以的打印log日志出来的只要将当前的包日志打印为debug也是可以，只是参数不够完整，直接复制查询sql 不太友好。
+eg: logging.level.com.boot.mybatis.mybatisdemo=debug
 
 <a name="VIcSM"></a>
 ## 1、使用
