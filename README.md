@@ -10,6 +10,8 @@
 <a name="VIcSM"></a>
 ## 1、使用
 [mybaits sql log Demo 工程](https://github.com/WangJi92/mybatis-log-demo/blob/master/README.md)
+
+实现原理主要类：com.mybatis.spring.boot.autoconfigure.MybatisSqlCompletePrintInterceptor
 ```xml
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
