@@ -37,10 +37,10 @@ spring.datasource.password = mysql-root
 spring.datasource.driver-class-name= com.mysql.jdbc.Driver
 spring.datasource.hikari.connection-test-query = SELECT 1
 ```
-效果
+效果，可以打印完整的SQL信息 【Mybatis Print SQL】【 select name, age, type from user WHERE ( name = '汪吉' ) 】   执行耗时=42
 
 ```xml
-2019-08-31 12:41:35.975  INFO 3258 --- [nio-7012-exec-3] s.b.a.MybatisSqlCompletePrintInterceptor : SQL:select name, age, type from user WHERE ( name = /*__frch_criterion_1.value*/'汪吉' )    执行耗时=6
+2019-08-31 16:58:21.996  INFO 8762 --- [nio-7012-exec-1] s.b.a.MybatisSqlCompletePrintInterceptor : 【Mybatis Print SQL】【 select name, age, type from user WHERE ( name = '汪吉' ) 】   执行耗时=42
 ```
 
 或者通过mybatis-config原生配置处理
