@@ -39,6 +39,15 @@ spring.datasource.hikari.connection-test-query = SELECT 1
 2019-08-31 12:41:35.975  INFO 3258 --- [nio-7012-exec-3] s.b.a.MybatisSqlCompletePrintInterceptor : SQL:select name, age, type from user WHERE ( name = /*__frch_criterion_1.value*/'汪吉' )    执行耗时=6
 ```
 
+或者通过mybatis-config原生配置处理
+```text
+<!-- mybatis-config.xml -->
+<plugins>
+  <plugin interceptor="com.mybatis.spring.boot.autoconfigure.MybatisSqlCompletePrintInterceptor">
+  </plugin>
+</plugins
+```
+
 <a name="d5d3a790"></a>
 ## 2、mybatis 官方插件
 
