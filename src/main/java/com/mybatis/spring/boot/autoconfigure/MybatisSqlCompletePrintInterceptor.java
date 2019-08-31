@@ -1,39 +1,36 @@
 package com.mybatis.spring.boot.autoconfigure;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.executor.statement.StatementHandler;
+import org.apache.ibatis.cache.CacheKey;
+import org.apache.ibatis.executor.Executor;
 import org.apache.ibatis.mapping.BoundSql;
+import org.apache.ibatis.mapping.MappedStatement;
 import org.apache.ibatis.mapping.ParameterMapping;
 import org.apache.ibatis.mapping.ParameterMode;
 import org.apache.ibatis.plugin.*;
 import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.ResultHandler;
-import org.apache.ibatis.session.SqlSessionFactory;
+import org.apache.ibatis.session.RowBounds;
 import org.apache.ibatis.type.TypeHandlerRegistry;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 
-import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
 
-@Intercepts({@Signature(type = StatementHandler.class, method = "query", args = {Statement.class, ResultHandler.class}),
-        @Signature(type = StatementHandler.class, method = "update", args = {Statement.class}),
-        @Signature(type = StatementHandler.class, method = "batch", args = {Statement.class})})
+@Intercepts({
+        @Signature(type = Executor.class, method = "update", args = {MappedStatement.class,
+                Object.class}),
+        @Signature(type = Executor.class, method = "query", args = {MappedStatement.class,
+                Object.class, RowBounds.class, ResultHandler.class}),
+        @Signature(type = Executor.class, method = "query", args = {MappedStatement.class,
+                Object.class, RowBounds.class, ResultHandler.class, CacheKey.class, BoundSql.class})
+})
 @Slf4j
 public class MybatisSqlCompletePrintInterceptor implements Interceptor, Ordered {
-
-
-    @Autowired
-    private BeanFactory beanFactory;
-
-    private SqlSessionFactory sqlSessionFactory;
-
 
     private static final ThreadLocal<SimpleDateFormat> DATE_FORMAT_THREAD_LOCAL = new ThreadLocal<SimpleDateFormat>() {
         @Override
@@ -44,7 +41,6 @@ public class MybatisSqlCompletePrintInterceptor implements Interceptor, Ordered 
 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
-        Object target = invocation.getTarget();
         long startTime = System.currentTimeMillis();
         try {
             return invocation.proceed();
@@ -52,27 +48,21 @@ public class MybatisSqlCompletePrintInterceptor implements Interceptor, Ordered 
             long endTime = System.currentTimeMillis();
             long sqlCost = endTime - startTime;
 
-            StatementHandler statementHandler = (StatementHandler) target;
-            BoundSql boundSql = statementHandler.getBoundSql();
-
-            //todo 这里可以通过 (BaseStatementHandler)((RoutingStatementHandler) target).delegate 这样反射获取 BaseStatementHandler typeHandlerRegistry Configuration
-            //也可以注入SqlSessionFactory 工厂获取
-//            final DefaultParameterHandler parameterHandler = (DefaultParameterHandler) statementHandler.getParameterHandler();
-//            Field typeHandlerRegistryField = ReflectionUtils.findField(parameterHandler.getClass(), "typeHandlerRegistry");
-//            Field configurationField = ReflectionUtils.findField(parameterHandler.getClass(), "configuration");
-//            TypeHandlerRegistry typeHandlerRegistry  = (TypeHandlerRegistry) typeHandlerRegistryField.get(parameterHandler);;
-//            Configuration configuration =  (Configuration) configurationField.get(parameterHandler);
-
-
-            String sql = boundSql.getSql();
-            if (beanFactory != null && beanFactory.getBean(SqlSessionFactory.class) == null) {
-                if (sqlSessionFactory == null) {
-                    sqlSessionFactory = beanFactory.getBean(SqlSessionFactory.class);
-                }
-                //替换参数格式化Sql语句，去除换行符
-                sql = formatSql(boundSql, sqlSessionFactory.getConfiguration());
+            MappedStatement mappedStatement = (MappedStatement) invocation.getArgs()[0];
+            Object parameter = null;
+            if (invocation.getArgs().length > 1) {
+                parameter = invocation.getArgs()[1];
             }
-            log.info("SQL:{}    执行耗时={}", sql, sqlCost);
+            String sqlId = mappedStatement.getId();
+            BoundSql boundSql = mappedStatement.getBoundSql(parameter);
+            Configuration configuration = mappedStatement.getConfiguration();
+
+
+            String sql = formatSql(boundSql, configuration);
+
+            //todo 这里可以添加执行耗时，处理，超时后做一些业务告警，比如推送钉钉群、打印特殊信息
+            log.debug("Mybatis MapperId={}", sqlId);
+            log.info("【Mybatis Print SQL】【 {} 】   执行耗时={}", sql, sqlCost);
         }
     }
 
@@ -109,7 +99,9 @@ public class MybatisSqlCompletePrintInterceptor implements Interceptor, Ordered 
 
         // 美化sql
         sql = beautifySql(sql);
-
+        /**
+         * @see org.apache.ibatis.scripting.defaults.DefaultParameterHandler 参考Mybatis 参数处理
+         */
         if (parameterMappings != null) {
             for (ParameterMapping parameterMapping : parameterMappings) {
                 if (parameterMapping.getMode() != ParameterMode.OUT) {
@@ -131,13 +123,14 @@ public class MybatisSqlCompletePrintInterceptor implements Interceptor, Ordered 
                     } else {
                         paramValueStr = "'" + value + "'";
                     }
-
-                    paramValueStr = "/*" + propertyName + "*/" + paramValueStr;
+                    // mybatis generator 中的参数不打印出来
+                    if(!propertyName.contains("frch_criterion")){
+                        paramValueStr = "/*" + propertyName + "*/" + paramValueStr;
+                    }
                     sql = sql.replaceFirst("\\?", paramValueStr);
                 }
             }
         }
-
         return sql;
     }
 
