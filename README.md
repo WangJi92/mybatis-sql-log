@@ -23,6 +23,8 @@
         </dependency>
 ```
 mybats.print=true 使用spring boot 工程集成
+
+org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration 内部自动集成了插件
 ```xml
 mybats.print=true
 server.port = 7012
