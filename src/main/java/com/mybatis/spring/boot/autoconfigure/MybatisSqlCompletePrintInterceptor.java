@@ -35,7 +35,6 @@ public class MybatisSqlCompletePrintInterceptor implements Interceptor, Ordered 
     private SqlSessionFactory sqlSessionFactory;
 
 
-
     private static final ThreadLocal<SimpleDateFormat> DATE_FORMAT_THREAD_LOCAL = new ThreadLocal<SimpleDateFormat>() {
         @Override
         protected SimpleDateFormat initialValue() {
@@ -46,9 +45,7 @@ public class MybatisSqlCompletePrintInterceptor implements Interceptor, Ordered 
     @Override
     public Object intercept(Invocation invocation) throws Throwable {
         Object target = invocation.getTarget();
-
         long startTime = System.currentTimeMillis();
-
         try {
             return invocation.proceed();
         } finally {
@@ -56,7 +53,6 @@ public class MybatisSqlCompletePrintInterceptor implements Interceptor, Ordered 
             long sqlCost = endTime - startTime;
 
             StatementHandler statementHandler = (StatementHandler) target;
-
             BoundSql boundSql = statementHandler.getBoundSql();
 
             //todo 这里可以通过 (BaseStatementHandler)((RoutingStatementHandler) target).delegate 这样反射获取 BaseStatementHandler typeHandlerRegistry Configuration
@@ -67,9 +63,16 @@ public class MybatisSqlCompletePrintInterceptor implements Interceptor, Ordered 
 //            TypeHandlerRegistry typeHandlerRegistry  = (TypeHandlerRegistry) typeHandlerRegistryField.get(parameterHandler);;
 //            Configuration configuration =  (Configuration) configurationField.get(parameterHandler);
 
-            // ，替换参数格式化Sql语句，去除换行符
-            String sql = formatSql(boundSql);
-            log.info("SQL:{}    执行耗时={}",sql,sqlCost);
+
+            String sql = boundSql.getSql();
+            if (beanFactory != null && beanFactory.getBean(SqlSessionFactory.class) == null) {
+                if (sqlSessionFactory == null) {
+                    sqlSessionFactory = beanFactory.getBean(SqlSessionFactory.class);
+                }
+                //替换参数格式化Sql语句，去除换行符
+                sql = formatSql(boundSql, sqlSessionFactory.getConfiguration());
+            }
+            log.info("SQL:{}    执行耗时={}", sql, sqlCost);
         }
     }
 
@@ -85,10 +88,11 @@ public class MybatisSqlCompletePrintInterceptor implements Interceptor, Ordered 
 
     /**
      * 获取完整的sql实体的信息
+     *
      * @param boundSql
      * @return
      */
-    private String formatSql(BoundSql boundSql) {
+    private String formatSql(BoundSql boundSql, Configuration configuration) {
         String sql = boundSql.getSql();
         List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();
         Object parameterObject = boundSql.getParameterObject();
@@ -97,18 +101,11 @@ public class MybatisSqlCompletePrintInterceptor implements Interceptor, Ordered 
             return "";
         }
 
-        if(beanFactory == null){
+        if (configuration == null) {
             return "";
         }
 
-        if (sqlSessionFactory == null) {
-            sqlSessionFactory = beanFactory.getBean(SqlSessionFactory.class);
-            if(sqlSessionFactory == null){
-                return "";
-            }
-        }
-        TypeHandlerRegistry typeHandlerRegistry = sqlSessionFactory.getConfiguration().getTypeHandlerRegistry();
-        Configuration configuration = sqlSessionFactory.getConfiguration();
+        TypeHandlerRegistry typeHandlerRegistry = configuration.getTypeHandlerRegistry();
 
         // 美化sql
         sql = beautifySql(sql);
