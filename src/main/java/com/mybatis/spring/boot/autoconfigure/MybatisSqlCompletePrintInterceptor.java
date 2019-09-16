@@ -38,7 +38,7 @@ public class MybatisSqlCompletePrintInterceptor implements Interceptor, Ordered 
     private static final ThreadLocal<SimpleDateFormat> DATE_FORMAT_THREAD_LOCAL = new ThreadLocal<SimpleDateFormat>() {
         @Override
         protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyy-MM-dd HH:mm:ss.SSS");
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
         }
     };
 
@@ -126,10 +126,12 @@ public class MybatisSqlCompletePrintInterceptor implements Interceptor, Ordered 
                         value = metaObject.getValue(propertyName);
                     }
                     String paramValueStr = "";
-                    if (value instanceof Date) {
+                    if(value instanceof String){
+                        paramValueStr = "'" + value + "'";
+                    }else if (value instanceof Date) {
                         paramValueStr = "'" + DATE_FORMAT_THREAD_LOCAL.get().format(value) + "'";
                     } else {
-                        paramValueStr = "'" + value + "'";
+                        paramValueStr =  value + "";
                     }
 
                     paramValueStr = "/*" + propertyName + "*/" + paramValueStr;
