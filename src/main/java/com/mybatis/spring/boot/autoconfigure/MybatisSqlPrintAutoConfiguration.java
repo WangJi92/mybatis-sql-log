@@ -33,7 +33,7 @@ public class MybatisSqlPrintAutoConfiguration {
     public class SupportPageHelper {
 
         @PostConstruct
-        public void addPageInterceptor() {
+        public void addPrintInterceptor() {
             MybatisSqlCompletePrintInterceptor printInterceptor = new MybatisSqlCompletePrintInterceptor();
             for (SqlSessionFactory sqlSessionFactory : sqlSessionFactoryList) {
                 sqlSessionFactory.getConfiguration().addInterceptor(printInterceptor);
@@ -50,7 +50,7 @@ public class MybatisSqlPrintAutoConfiguration {
     @ConditionalOnExpression("${mybatis.print:true}")
     public class AutoConfigPrintInterceptor {
         @PostConstruct
-        public void addPageInterceptor() {
+        public void addPrintInterceptor() {
             MybatisSqlCompletePrintInterceptor printInterceptor = new MybatisSqlCompletePrintInterceptor();
             for (SqlSessionFactory sqlSessionFactory : sqlSessionFactoryList) {
                 sqlSessionFactory.getConfiguration().addInterceptor(printInterceptor);
