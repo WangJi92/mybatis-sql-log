@@ -1,15 +1,26 @@
 # mybatis-sql-log
 
-<a name="mybatis-sql-log"></a>
-# mybatis-sql-log
-
 > mybatis-sql-log 主要是为了打印mybatis 完整的sql语句，通过mybaits 提供的插件的方式进行拦截，
 > 获取内部执行的sql，并将完整的sql语句打印出来。
 
+spring boot 其实可以的打印log日志出来的只要将当前的包日志打印为debug也是可以，只是参数不够完整，直接复制查询sql 不太友好。
+eg: logging.level.com.boot.mybatis.mybatisdemo=debug
 
 <a name="VIcSM"></a>
 ## 1、使用
 [mybaits sql log Demo 工程](https://github.com/WangJi92/mybatis-log-demo/blob/master/README.md)
+
+插件可以在maven 仓库中搜索  mybatis-sql-log
+[阿里云搜索](https://maven.aliyun.com/mvn/search)
+```xml
+         <dependency>
+            <groupId>com.github.WangJi92</groupId>
+            <artifactId>mybatis-sql-log</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+```
+
+实现原理主要类：com.mybatis.spring.boot.autoconfigure.MybatisSqlCompletePrintInterceptor
 ```xml
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
@@ -19,7 +30,7 @@
          <dependency>
             <groupId>com.github.WangJi92</groupId>
             <artifactId>mybatis-sql-log</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.1</version>
         </dependency>
 ```
 mybats.print=true 使用spring boot 工程集成
@@ -35,10 +46,10 @@ spring.datasource.password = mysql-root
 spring.datasource.driver-class-name= com.mysql.jdbc.Driver
 spring.datasource.hikari.connection-test-query = SELECT 1
 ```
-效果
+效果，可以打印完整的SQL信息 【Mybatis Print SQL】【 select name, age, type from user WHERE ( name = '汪吉' ) 】   执行耗时=42
 
 ```xml
-2019-08-31 12:41:35.975  INFO 3258 --- [nio-7012-exec-3] s.b.a.MybatisSqlCompletePrintInterceptor : SQL:select name, age, type from user WHERE ( name = /*__frch_criterion_1.value*/'汪吉' )    执行耗时=6
+2019-08-31 16:58:21.996  INFO 8762 --- [nio-7012-exec-1] s.b.a.MybatisSqlCompletePrintInterceptor : 【Mybatis Print SQL】【 select name, age, type from user WHERE ( name = '汪吉' ) 】   执行耗时=42
 ```
 
 或者通过mybatis-config原生配置处理
