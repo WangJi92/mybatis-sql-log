@@ -51,7 +51,7 @@ spring.datasource.hikari.connection-test-query = SELECT 1
 ```xml
 2019-08-31 16:58:21.996  INFO 8762 --- [nio-7012-exec-1] s.b.a.MybatisSqlCompletePrintInterceptor : 【Mybatis Print SQL】【 select name, age, type from user WHERE ( name = '汪吉' ) 】   执行耗时=42
 ```
-![MyBatis Log 打印效果](https://github.com/WangJi92/mybatis-sql-log/tree/master/src/main/resources/image/mybatis-log.png)
+![MyBatis Log 打印效果](https://github.com/WangJi92/mybatis-sql-log/blob/master/src/main/resources/image/mybatis-log.png)
 或者通过mybatis-config原生配置处理
 ```text
 <!-- mybatis-config.xml -->
