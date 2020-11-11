@@ -18,7 +18,7 @@ eg: logging.level.com.boot.mybatis.mybatisdemo=debug
          <dependency>
             <groupId>com.github.WangJi92</groupId>
             <artifactId>mybatis-sql-log</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.3</version>
         </dependency>
 ```
 
@@ -32,14 +32,14 @@ eg: logging.level.com.boot.mybatis.mybatisdemo=debug
          <dependency>
             <groupId>com.github.WangJi92</groupId>
             <artifactId>mybatis-sql-log</artifactId>
-            <version>1.0.2</version>
+            <version>1.0.3</version>
         </dependency>
 ```
 mybats.print=true 使用spring boot 工程集成
 
 org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration 内部自动集成了插件
 ```xml
-mybats.print=true
+mybatis.print=true
 server.port = 7012
 #数据库连接
 spring.datasource.url = jdbc:mysql://127.0.0.1:3306/test

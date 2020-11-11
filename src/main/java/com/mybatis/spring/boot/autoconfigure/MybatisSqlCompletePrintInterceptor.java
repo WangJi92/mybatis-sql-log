@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Matcher;
 
 /**
  * 这里没有使用拦截 {@link org.apache.ibatis.executor.Executor 主要是因为PageHelp处理的时候，直接调用Executor的方法进行处理，没有调用invocation.proceed() 下一个拦截器处理，直接处理SQL
@@ -132,7 +133,9 @@ public class MybatisSqlCompletePrintInterceptor implements Interceptor, Ordered 
                     if(!propertyName.contains("frch_criterion")){
                         paramValueStr = "/*" + propertyName + "*/" + paramValueStr;
                     }
-                    sql = sql.replaceFirst("\\?", paramValueStr);
+                    // java.lang.IllegalArgumentException: Illegal group reference
+                    // https://github.com/WangJi92/mybatis-sql-log/issues/4
+                    sql = sql.replaceFirst("\\?", Matcher.quoteReplacement(paramValueStr));
                 }
             }
         }
