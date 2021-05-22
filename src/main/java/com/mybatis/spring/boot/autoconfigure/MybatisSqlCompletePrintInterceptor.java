@@ -26,7 +26,7 @@ import java.util.regex.Matcher;
  * 这里没有使用拦截 {@link org.apache.ibatis.executor.Executor 主要是因为PageHelp处理的时候，直接调用Executor的方法进行处理，没有调用invocation.proceed() 下一个拦截器处理，直接处理SQL
  * 的修改，因此，将这个拦截设置到最后的查询阶段去处理哦}
  * {@linkplain com.github.pagehelper.PageInterceptor executor.query(ms, parameter, rowBounds, resultHandler, cacheKey, boundSql) }
- *
+ * <p>
  * 因此拦截StatementHandler 肯定不会错误【StatementHandler，语句处理器负责和JDBC层具体交互，包括prepare语句，执行语句，以及调用ParameterHandler.parameterize()设置参数】
  */
 @Intercepts({@Signature(type = StatementHandler.class, method = "query", args = {Statement.class, ResultHandler.class}),
@@ -35,7 +35,7 @@ import java.util.regex.Matcher;
 @Slf4j
 public class MybatisSqlCompletePrintInterceptor implements Interceptor, Ordered {
 
-    private Configuration configuration =null;
+    private Configuration configuration = null;
 
     private static final ThreadLocal<SimpleDateFormat> DATE_FORMAT_THREAD_LOCAL = new ThreadLocal<SimpleDateFormat>() {
         @Override
@@ -51,23 +51,36 @@ public class MybatisSqlCompletePrintInterceptor implements Interceptor, Ordered 
         try {
             return invocation.proceed();
         } finally {
+            String sql = this.getSql(target);
             long endTime = System.currentTimeMillis();
             long sqlCost = endTime - startTime;
+            log.info("SQL:{}    执行耗时={}", sql, sqlCost);
+        }
+    }
 
+    /**
+     * 获取sql
+     *
+     * @param target
+     * @return
+     * @throws IllegalAccessException
+     */
+    private String getSql(Object target) {
+        try {
             StatementHandler statementHandler = (StatementHandler) target;
             BoundSql boundSql = statementHandler.getBoundSql();
-
-            if(configuration ==null){
+            if (configuration == null) {
                 final DefaultParameterHandler parameterHandler = (DefaultParameterHandler) statementHandler.getParameterHandler();
                 Field configurationField = ReflectionUtils.findField(parameterHandler.getClass(), "configuration");
                 ReflectionUtils.makeAccessible(configurationField);
-                 this.configuration =  (Configuration) configurationField.get(parameterHandler);
+                this.configuration = (Configuration) configurationField.get(parameterHandler);
             }
-
             //替换参数格式化Sql语句，去除换行符
-            String sql = formatSql(boundSql, configuration);
-            log.info("SQL:{}    执行耗时={}", sql, sqlCost);
+            return formatSql(boundSql, configuration);
+        } catch (Exception e) {
+            log.warn("get sql error {}", target, e);
         }
+        return "";
     }
 
     @Override
@@ -122,15 +135,15 @@ public class MybatisSqlCompletePrintInterceptor implements Interceptor, Ordered 
                         value = metaObject.getValue(propertyName);
                     }
                     String paramValueStr = "";
-                    if(value instanceof String){
+                    if (value instanceof String) {
                         paramValueStr = "'" + value + "'";
-                    }else if (value instanceof Date) {
+                    } else if (value instanceof Date) {
                         paramValueStr = "'" + DATE_FORMAT_THREAD_LOCAL.get().format(value) + "'";
                     } else {
-                        paramValueStr =  value + "";
+                        paramValueStr = value + "";
                     }
                     // mybatis generator 中的参数不打印出来
-                    if(!propertyName.contains("frch_criterion")){
+                    if (!propertyName.contains("frch_criterion")) {
                         paramValueStr = "/*" + propertyName + "*/" + paramValueStr;
                     }
                     // java.lang.IllegalArgumentException: Illegal group reference
