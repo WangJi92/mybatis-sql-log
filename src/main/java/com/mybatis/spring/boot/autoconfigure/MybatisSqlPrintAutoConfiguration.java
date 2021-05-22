@@ -34,8 +34,8 @@ public class MybatisSqlPrintAutoConfiguration {
 
         @PostConstruct
         public void addPrintInterceptor() {
-            MybatisSqlCompletePrintInterceptor printInterceptor = new MybatisSqlCompletePrintInterceptor();
             for (SqlSessionFactory sqlSessionFactory : sqlSessionFactoryList) {
+                MybatisSqlCompletePrintInterceptor printInterceptor = new MybatisSqlCompletePrintInterceptor();
                 sqlSessionFactory.getConfiguration().addInterceptor(printInterceptor);
             }
         }
@@ -51,8 +51,8 @@ public class MybatisSqlPrintAutoConfiguration {
     public class AutoConfigPrintInterceptor {
         @PostConstruct
         public void addPrintInterceptor() {
-            MybatisSqlCompletePrintInterceptor printInterceptor = new MybatisSqlCompletePrintInterceptor();
             for (SqlSessionFactory sqlSessionFactory : sqlSessionFactoryList) {
+                MybatisSqlCompletePrintInterceptor printInterceptor = new MybatisSqlCompletePrintInterceptor();
                 sqlSessionFactory.getConfiguration().addInterceptor(printInterceptor);
             }
         }
