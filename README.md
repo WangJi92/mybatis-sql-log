@@ -18,7 +18,7 @@ eg: logging.level.com.boot.mybatis.mybatisdemo=debug
          <dependency>
             <groupId>com.github.WangJi92</groupId>
             <artifactId>mybatis-sql-log</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.4</version>
         </dependency>
 ```
 
@@ -32,7 +32,7 @@ eg: logging.level.com.boot.mybatis.mybatisdemo=debug
          <dependency>
             <groupId>com.github.WangJi92</groupId>
             <artifactId>mybatis-sql-log</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.4</version>
         </dependency>
 ```
 mybats.print=true 使用spring boot 工程集成
