@@ -18,7 +18,7 @@ eg: logging.level.com.boot.mybatis.mybatisdemo=debug
          <dependency>
             <groupId>com.github.WangJi92</groupId>
             <artifactId>mybatis-sql-log</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.5</version>
         </dependency>
 ```
 

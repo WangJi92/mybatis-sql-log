@@ -2,7 +2,6 @@ package com.mybatis.spring.boot.autoconfigure;
 
 import com.github.pagehelper.autoconfigure.PageHelperAutoConfiguration;
 import org.apache.ibatis.session.SqlSessionFactory;
-import org.mybatis.spring.boot.autoconfigure.MybatisAutoConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -17,7 +16,6 @@ import java.util.List;
 
 @Configuration
 @ConditionalOnBean(SqlSessionFactory.class)
-@AutoConfigureAfter(MybatisAutoConfiguration.class)
 public class MybatisSqlPrintAutoConfiguration {
 
     @Autowired
@@ -35,7 +33,8 @@ public class MybatisSqlPrintAutoConfiguration {
         @PostConstruct
         public void addPrintInterceptor() {
             for (SqlSessionFactory sqlSessionFactory : sqlSessionFactoryList) {
-                MybatisSqlCompletePrintInterceptor printInterceptor = new MybatisSqlCompletePrintInterceptor();
+                org.apache.ibatis.session.Configuration configuration = sqlSessionFactory.getConfiguration();
+                MybatisSqlCompletePrintInterceptor printInterceptor = new MybatisSqlCompletePrintInterceptor(configuration);
                 sqlSessionFactory.getConfiguration().addInterceptor(printInterceptor);
             }
         }
@@ -49,10 +48,12 @@ public class MybatisSqlPrintAutoConfiguration {
     @AutoConfigureAfter(PageHelperAutoConfiguration.class)
     @ConditionalOnExpression("${mybatis.print:true}")
     public class AutoConfigPrintInterceptor {
+
         @PostConstruct
         public void addPrintInterceptor() {
             for (SqlSessionFactory sqlSessionFactory : sqlSessionFactoryList) {
-                MybatisSqlCompletePrintInterceptor printInterceptor = new MybatisSqlCompletePrintInterceptor();
+                org.apache.ibatis.session.Configuration configuration = sqlSessionFactory.getConfiguration();
+                MybatisSqlCompletePrintInterceptor printInterceptor = new MybatisSqlCompletePrintInterceptor(configuration);
                 sqlSessionFactory.getConfiguration().addInterceptor(printInterceptor);
             }
         }
