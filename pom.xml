@@ -4,15 +4,15 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.WangJi92</groupId>
     <artifactId>mybatis-sql-log</artifactId>
-    <version>1.0.4</version>
+    <version>1.0.6</version>
     <name>mybatis-log</name>
-    <description>spring boot start mybaits sql log plugins</description>
+    <description>spring boot start mybatis sql log plugins</description>
     <url>https://github.com/WangJi92/mybatis-sql-log</url>
 
     <properties>
         <java.version>1.8</java.version>
-        <spring-boot.version>2.1.7.RELEASE</spring-boot.version>
-        <mybatis.version>3.5.6</mybatis.version>
+        <mybatis.version>3.5.9</mybatis.version>
+        <spring-boot.version>2.7.18</spring-boot.version>
         <mybatis-spring.version>2.0.2</mybatis-spring.version>
     </properties>
 
@@ -29,6 +29,7 @@
         <connection>https://github.com/WangJi92/mybatis-sql-log.git</connection>
         <developerConnection>https://github.com/WangJi92/mybatis-sql-log.git</developerConnection>
     </scm>
+
     <developers>
         <developer>
             <name>wangji</name>
@@ -36,6 +37,7 @@
             <url>https://github.com/WangJi92/mybatis-sql-log.git</url>
         </developer>
     </developers>
+
 
     <dependencyManagement>
         <dependencies>
