@@ -4,7 +4,6 @@ import com.github.pagehelper.autoconfigure.PageHelperAutoConfiguration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
@@ -15,7 +14,8 @@ import java.util.List;
 
 
 @Configuration
-@ConditionalOnBean(SqlSessionFactory.class)
+@ConditionalOnClass(name = "org.apache.ibatis.session.SqlSessionFactory")
+@ConditionalOnExpression("${mybatis.print:true}")
 public class MybatisSqlPrintAutoConfiguration {
 
     @Autowired
@@ -26,7 +26,6 @@ public class MybatisSqlPrintAutoConfiguration {
      * 或者通过原生的进行处理
      */
     @Configuration
-    @ConditionalOnExpression("${mybatis.print:true}")
     @ConditionalOnMissingClass({"com.github.pagehelper.autoconfigure.PageHelperAutoConfiguration"})
     public class SupportPageHelper {
 
@@ -46,7 +45,6 @@ public class MybatisSqlPrintAutoConfiguration {
     @Configuration
     @ConditionalOnClass({PageHelperAutoConfiguration.class})
     @AutoConfigureAfter(PageHelperAutoConfiguration.class)
-    @ConditionalOnExpression("${mybatis.print:true}")
     public class AutoConfigPrintInterceptor {
 
         @PostConstruct

@@ -71,12 +71,6 @@ public class MybatisSqlCompletePrintInterceptor implements Interceptor, Ordered 
         try {
             StatementHandler statementHandler = (StatementHandler) target;
             BoundSql boundSql = statementHandler.getBoundSql();
-//            if (configuration == null) {
-//                final DefaultParameterHandler parameterHandler = (DefaultParameterHandler) statementHandler.getParameterHandler();
-//                Field configurationField = ReflectionUtils.findField(parameterHandler.getClass(), "configuration");
-//                ReflectionUtils.makeAccessible(configurationField);
-//                this.configuration = (Configuration) configurationField.get(parameterHandler);
-//            }
             //替换参数格式化Sql语句，去除换行符
             return formatSql(boundSql, configuration);
         } catch (Exception e) {
