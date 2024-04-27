@@ -30,6 +30,14 @@
         <developerConnection>https://github.com/WangJi92/mybatis-sql-log.git</developerConnection>
     </scm>
 
+    <developers>
+        <developer>
+            <name>wangji</name>
+            <email>983433479@qq.com</email>
+            <url>https://github.com/WangJi92/mybatis-sql-log.git</url>
+        </developer>
+    </developers>
+
 
     <dependencyManagement>
         <dependencies>
